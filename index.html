@@ -27,42 +27,45 @@
     </form>
 
     <script type="text/javascript">
-        let isSubmitting = false;
-
-        document.getElementById('entry-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            if (isSubmitting) {
-                return;
-            }
-
-            isSubmitting = true;
-
-            const name = document.getElementById('name').value;
-            const max = document.getElementById('max').value;
-
-            MDS.sql(`INSERT INTO AddressBook (name, max) VALUES ('${name}', '${max}')`, function(response) {
-                if (response.status) {
-                    updateTable();
+        // Wait for the HTML document to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            let isSubmitting = false;
+    
+            document.getElementById('entry-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+    
+                if (isSubmitting) {
+                    return;
                 }
-                isSubmitting = false;
-            });
-        });
-
-        function updateTable() {
-            MDS.sql('SELECT * FROM AddressBook', function(response) {
-                if (response.status) {
-                    const data = response.rows;
-                    let tableHTML = '';
-                    for (let i = 0; i < data.length; i++) {
-                        tableHTML += `<tr><td>${data[i].NAME}</td><td>${data[i].MAX}</td></tr>`;
+    
+                isSubmitting = true;
+    
+                const name = document.getElementById('name').value;
+                const max = document.getElementById('max').value;
+    
+                // Insert new entry after MDS is initialized
+                MDS.sql(`INSERT INTO AddressBook (name, max) VALUES ('${name}', '${max}')`, function(response) {
+                    if (response.status) {
+                        updateTable();
                     }
-                    document.querySelector('#address-book tbody').innerHTML = tableHTML;
-                }
+                    isSubmitting = false;
+                });
             });
-        }
-
-        MDS.init(function() {
+    
+            function updateTable() {
+                MDS.sql('SELECT * FROM AddressBook', function(response) {
+                    if (response.status) {
+                        const data = response.rows;
+                        let tableHTML = '';
+                        for (let i = 0; i < data.length; i++) {
+                            tableHTML += `<tr><td>${data[i].NAME}</td><td>${data[i].MAX}</td></tr>`;
+                        }
+                        document.querySelector('#address-book tbody').innerHTML = tableHTML;
+                    }
+                });
+            }
+    
+            // Create table if not exists
             MDS.sql(`CREATE TABLE IF NOT EXISTS AddressBook (
                 name VARCHAR(255),
                 max VARCHAR(255)
@@ -73,5 +76,6 @@
             });
         });
     </script>
+    
 </body>
 </html>
