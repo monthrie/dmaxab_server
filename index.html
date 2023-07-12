@@ -1,0 +1,77 @@
+<html>
+<head>
+    <script type="text/javascript" src="mds.js"></script>
+    <script type="text/javascript" src="service.js"></script>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <title>Address Book</title>
+</head>
+<body>
+    <h1>Address Book</h1>
+    <table id="address-book">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>MAX#</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <h2>Add Entry</h2>
+    <form id="entry-form">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name"><br>
+        <label for="max">MAX#:</label><br>
+        <input type="text" id="max" name="max"><br>
+        <input type="submit" value="Submit">
+    </form>
+
+    <script type="text/javascript">
+        let isSubmitting = false;
+
+        document.getElementById('entry-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            if (isSubmitting) {
+                return;
+            }
+
+            isSubmitting = true;
+
+            const name = document.getElementById('name').value;
+            const max = document.getElementById('max').value;
+
+            MDS.sql(`INSERT INTO AddressBook (name, max) VALUES ('${name}', '${max}')`, function(response) {
+                if (response.status) {
+                    updateTable();
+                }
+                isSubmitting = false;
+            });
+        });
+
+        function updateTable() {
+            MDS.sql('SELECT * FROM AddressBook', function(response) {
+                if (response.status) {
+                    const data = response.rows;
+                    let tableHTML = '';
+                    for (let i = 0; i < data.length; i++) {
+                        tableHTML += `<tr><td>${data[i].NAME}</td><td>${data[i].MAX}</td></tr>`;
+                    }
+                    document.querySelector('#address-book tbody').innerHTML = tableHTML;
+                }
+            });
+        }
+
+        MDS.init(function() {
+            MDS.sql(`CREATE TABLE IF NOT EXISTS AddressBook (
+                name VARCHAR(255),
+                max VARCHAR(255)
+            )`, function(response) {
+                if (response.status) {
+                    updateTable();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
