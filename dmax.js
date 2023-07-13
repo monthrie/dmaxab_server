@@ -129,7 +129,7 @@ function sendMinima(amount, address, callback) {
     MDS.cmd(maxcmd, function (msg) {
         MDS.log(`sendMinima function response: ${JSON.stringify(msg)}`);
         if (callback) {
-            //return the coinid
+            //return the coini
             if (msg.status) {
                 MDS.log(`coindid returned: ${JSON.stringify(msg.response.body.txn.outputs[0].coinid)}`);
                 callback(msg.response.body.txn.outputs[0].coinid);
