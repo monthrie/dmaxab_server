@@ -6,7 +6,7 @@
     <title>Address Book</title>
 </head>
 <body>
-    <h1>Address Book</h1>
+    <h1>Address Book ADMIN</h1>
     <table id="address-book">
         <thead>
             <tr>
@@ -30,20 +30,19 @@
         // Wait for the HTML document to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
             let isSubmitting = false;
-    
+
             document.getElementById('entry-form').addEventListener('submit', function(event) {
                 event.preventDefault();
-    
+
                 if (isSubmitting) {
                     return;
                 }
-    
+
                 isSubmitting = true;
-    
+
                 const name = document.getElementById('name').value;
                 const max = document.getElementById('max').value;
-    
-                // Insert new entry after MDS is initialized
+
                 MDS.sql(`INSERT INTO AddressBook (name, max) VALUES ('${name}', '${max}')`, function(response) {
                     if (response.status) {
                         updateTable();
@@ -51,7 +50,7 @@
                     isSubmitting = false;
                 });
             });
-    
+
             function updateTable() {
                 MDS.sql('SELECT * FROM AddressBook', function(response) {
                     if (response.status) {
@@ -64,18 +63,19 @@
                     }
                 });
             }
-    
-            // Create table if not exists
-            MDS.sql(`CREATE TABLE IF NOT EXISTS AddressBook (
-                name VARCHAR(255),
-                max VARCHAR(255)
-            )`, function(response) {
-                if (response.status) {
-                    updateTable();
-                }
+
+            // Initialize MDS after the HTML document is fully loaded
+            MDS.init(function() {
+                MDS.sql(`CREATE TABLE IF NOT EXISTS AddressBook (
+                    name VARCHAR(255),
+                    max VARCHAR(255)
+                )`, function(response) {
+                    if (response.status) {
+                        updateTable();
+                    }
+                });
             });
         });
     </script>
-    
 </body>
 </html>
