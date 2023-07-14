@@ -48,6 +48,13 @@ function handleAddAddress(jsonData) {
     MDS.sql(`INSERT INTO AddressBook (name, max) VALUES ('${name}', '${max}')`, function(response) {
         if (response.status) {
             MDS.log('New entry added to AddressBook');
+            
+            // Retrieve and log the just-inserted data
+            MDS.sql(`SELECT * FROM AddressBook WHERE name = '${name}' AND max = '${max}'`, function(response) {
+                if (response.status && response.rows.length > 0) {
+                    MDS.log('Just-inserted data: ' + JSON.stringify(response.rows[0]));
+                }
+            });
         } else {
             MDS.log('There was an error adding the new entry: ' + response.error);
         }

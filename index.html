@@ -20,10 +20,20 @@
             margin-bottom: 20px; /* Add some space below the table */
         }
         th, td {
-            border: 1px solid black; /* Add a border around each cell */
-            padding: 10px; /* Add some space around the cell content */
-            text-align: center; /* Center the text in the cells */
+        border: 1px solid black;
+        padding: 10px;
+        text-align: center;
+    }
+        td.max {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 150px; /* adjust this value as needed */
         }
+        
         /* Styles for the button */
         button {
             padding: 5px 10px; /* Add some space around the button text */
@@ -75,7 +85,7 @@ function updateTable() {
                         const data = response.rows;
                         let tableHTML = '';
                         for (let i = 0; i < data.length; i++) {
-                            tableHTML += `<tr><td>${data[i].NAME}</td><td>${data[i].MAX}</td><td><button onclick="deleteRow(${data[i].ID})">Delete</button></td></tr>`;
+                            tableHTML += `<tr><td>${data[i].NAME}<td class="max">${data[i].MAX}</td><td><button onclick="deleteRow(${data[i].ID})">Delete</button></td></tr>`;
                         }
                         document.querySelector('#address-book tbody').innerHTML = tableHTML;
                     }
@@ -116,7 +126,7 @@ function updateTable() {
             MDS.sql(`CREATE TABLE IF NOT EXISTS AddressBook (
                     id INTEGER PRIMARY KEY auto_increment,
                     name VARCHAR(255),
-                    max VARCHAR(255)
+                    max VARCHAR(666)
                 )`, function(response) {
                     if (response.status) {
                         console.log("Table created successfully with ID field");
