@@ -48,7 +48,7 @@
         <thead>
             <tr>
                 <th>Name</th>
-                <th>MAX#</th>
+                <th class="max">MAX#</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -95,18 +95,30 @@
                         const data = response.rows;
                         let tableHTML = '';
                         for (let i = 0; i < data.length; i++) {
-                            tableHTML += `<tr><td>${data[i].NAME}</td><td>${data[i].MAX}</td></tr>`;
-                        }
+                            tableHTML += `<tr><td>${data[i].NAME}</td><td class="max">${data[i].MAX}</td><td><button onclick="deleteEntry(${data[i].ID})">Delete</button></td></tr>`;}
                         document.querySelector('#address-book tbody').innerHTML = tableHTML;
                     }
                 });
             }
+            
+            function deleteEntry(id) {
+                MDS.sql(`DELETE FROM AddressBook WHERE id = ${id}`, function(response) {
+                    if (response.status) {
+                        updateTable();
+            }
+                });
+            }
 
+
+
+            
             // Initialize MDS after the HTML document is fully loaded
             MDS.init(function() {
                 MDS.sql(`CREATE TABLE IF NOT EXISTS AddressBook (
+                    id INTEGER AUTO_INCREMENT,
                     name VARCHAR(255),
-                    max VARCHAR(666)
+                    max VARCHAR(666),
+                    PRIMARY KEY(id)
                 )`, function(response) {
                     if (response.status) {
                         updateTable();
@@ -114,6 +126,8 @@
                 });
             });
         });
+
+
     </script>
 </body>
 </html>
