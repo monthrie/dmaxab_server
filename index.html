@@ -93,10 +93,18 @@
                 MDS.sql('SELECT * FROM AddressBook', function(response) {
                     if (response.status) {
                         const data = response.rows;
+                        console.log(data);  // <----- log the data
                         let tableHTML = '';
                         for (let i = 0; i < data.length; i++) {
-                            tableHTML += `<tr><td>${data[i].NAME}</td><td class="max">${data[i].MAX}</td><td><button onclick="deleteEntry(${data[i].ID})">Delete</button></td></tr>`;}
+                            tableHTML += `<tr><td>${data[i].NAME}</td><td class="max">${data[i].MAX}</td><td><button id="delete-${data[i].ID}">Delete</button></td></tr>`;}
                         document.querySelector('#address-book tbody').innerHTML = tableHTML;
+
+                        for (let i = 0; i < data.length; i++) {
+                document.querySelector(`#delete-${data[i].ID}`).addEventListener('click', function() {
+                    deleteEntry(data[i].ID);
+                });
+            }
+
                     }
                 });
             }
