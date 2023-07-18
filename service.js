@@ -45,6 +45,14 @@ function handleAddAddress(jsonData) {
 
     MDS.log('Adding new address: ' + name + ', ' + max); 
 
+
+      // Check if the name already exists in the database
+      MDS.sql(`SELECT * FROM AddressBook WHERE name = '${name}'`, function(response) {
+
+        // If the name is unique, add the new entry
+        // This code will only be executed if there are no entries with the same name
+        if (response.status && response.rows.length === 0) {
+
             // If the entry doesn't exist, add it
             MDS.sql(`INSERT INTO AddressBook (name, max) VALUES ('${name}', '${max}')`, function(response) {
                 if (response.status) {
@@ -53,8 +61,13 @@ function handleAddAddress(jsonData) {
                     MDS.log('There was an error adding the new entry: ' + response.error);
                 }
             });
+
+        } else {
+            // If the name is not unique, log a message and do not add the entry
+            MDS.log('Name must be unique. No entry added to AddressBook.');
+        }
+    });
         
-    
 
 }
 
