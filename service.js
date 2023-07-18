@@ -4,6 +4,17 @@
 * @monthrie
 */
 
+// Send a message to client address
+function sendMessage(message, address, callback) {
+    var maxcmd = "maxima action:send poll:true to:" + address + " application:dmaxabclient data:" + JSON.stringify(message);
+    MDS.cmd(maxcmd, function (msg) {
+        MDS.log(JSON.stringify(msg));
+        if (callback) {
+            callback(msg);
+        }
+    });
+}
+
 // Initialize MDS
 MDS.init(function(msg) {
     if (msg.event !== "MAXIMA") return;
@@ -21,6 +32,7 @@ MDS.init(function(msg) {
     
         // Handle the different message types
         handleMessage(jsonData);
+    });
  
 
 //handle different incoming messages
@@ -65,6 +77,13 @@ function handleAddAddress(jsonData) {
         } else {
             // If the name is not unique, log a message and do not add the entry
             MDS.log('Name must be unique. No entry added to AddressBook.');
+         
+            sendMessage({
+                type: "error_message",
+                data: 'Name must be unique'
+            }, max);
+            //log error message sent
+            MDS.log('Error message sent');
         }
     });
         
@@ -99,20 +118,6 @@ function handleTableRequest(jsonData) {
         }
     });
 }
-
-
-// Send a message to client address
-function sendMessage(message, address, callback) {
-    var maxcmd = "maxima action:send poll:true to:" + address + " application:dmaxabclient data:" + JSON.stringify(message);
-    MDS.cmd(maxcmd, function (msg) {
-        MDS.log(JSON.stringify(msg));
-        if (callback) {
-            callback(msg);
-        }
-    });
-}
-
-});
 });
 
 
